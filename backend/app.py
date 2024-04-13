@@ -112,5 +112,84 @@ def get_student_profile():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/signup/Faculty', methods=['POST'])
+def create_faculty():
+    try:
+        app.config['MYSQL_USER'] = config.MYSQL_USER
+        app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
+        cur = mysql.connection.cursor()
+        data = request.get_json()
+        
+        # Extract data from the request
+        useremail = data['useremail']
+        password = data['password']
+        housingNumber = data.get('housingNumber')
+        flatNumber = data.get('flatNumber')
+        phoneNumber = data.get('phoneNumber')
+        discipline = data.get('discipline')
+        permanentAddress = data.get('permanentAddress')
+        isOnCampus = data.get('isOnCampus')
+
+        # Check if the email address matches the required format
+        if not re.match(r'^[^\s@]+@iitgn\.ac\.in$', useremail):
+            raise ValueError("Invalid email address format")
+        
+
+        # Insert user details into the Faculty table
+        cur.execute("INSERT INTO Faculty (useremail, password, housingNumber, flatNumber, phoneNumber, discipline, permanentAddress, isOnCampus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (useremail, password, housingNumber, flatNumber, phoneNumber, discipline, permanentAddress, isOnCampus))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": "Faculty created successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Faculty login endpoint
+@app.route('/login/Faculty', methods=['POST'])
+def faculty_login():
+    try:
+        data = request.get_json()
+        useremail = data.get('useremail')
+        password = data.get('password')
+        set_mysql_credentials(useremail, password)
+        # Authenticate faculty
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM Faculty WHERE useremail = %s AND password = %s", (useremail, password))
+        faculty = cur.fetchone()
+        cur.close()
+
+        if faculty:
+            # Generate JWT token
+            access_token = create_access_token(identity=useremail)
+            return jsonify(access_token=access_token), 200
+        else:
+            return jsonify({"error": "Invalid credentials"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Faculty profile endpoint (protected by JWT)
+@app.route('/profile/Faculty', methods=['GET'])
+@jwt_required()
+def get_faculty_profile():
+    try:
+        current_user = get_jwt_identity()
+
+        # Retrieve faculty profile from database
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM Faculty WHERE useremail = %s", (current_user,))
+        faculty = cur.fetchone()
+        cur.close()
+
+        if faculty:
+            return jsonify(faculty), 200
+        else:
+            return jsonify({"message": "Faculty not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)

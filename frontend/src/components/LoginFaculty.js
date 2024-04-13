@@ -18,13 +18,13 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/login/Student', formData);
+      const response = await axios.post('http://localhost:5000/login/Faculty', formData);
       const { access_token } = response.data;
       // Store the token in local storage or state for future requests
       localStorage.setItem('accessToken', access_token);
       // Redirect or perform any other actions upon successful login
       // Example: history.push('/dashboard');
-      window.location.href = '/studentprofile';
+      window.location.href = '/facultyprofile';
     } catch (error) {
       setError(error.response.data.error);
     }
