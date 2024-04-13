@@ -45,7 +45,38 @@ const SignUpForm = () => {
           <label>Password:</label>
           <input type="password" name="password" value={formData.password} onChange={handleChange} required />
         </div>
-        {/* Add additional form fields here for hostelName, RoomNumber, etc. */}
+        <div>
+          <label>Hostel Name:</label>
+          <input type="text" name="hostelName" value={formData.hostelName} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Room Number:</label>
+          <input type="text" name="RoomNumber" value={formData.RoomNumber} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Phone Number:</label>
+          <input type="text" name="PhoneNumber" value={formData.PhoneNumber} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Program:</label>
+          <input type="text" name="program" value={formData.program} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Discipline:</label>
+          <input type="text" name="discipline" value={formData.discipline} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Roll Number:</label>
+          <input type="text" name="RollNumber" value={formData.RollNumber} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Address:</label>
+          <input type="text" name="address" value={formData.address} onChange={handleChange} />
+        </div>
+        <div>
+          <label>On Campus:</label>
+          <input type="checkbox" name="isOnCampus" checked={formData.isOnCampus} onChange={() => setFormData({...formData, isOnCampus: !formData.isOnCampus})} />
+        </div>
         <button type="submit">Sign Up</button>
       </form>
       {message && <p>{message}</p>}

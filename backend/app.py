@@ -17,9 +17,16 @@ app.config['MYSQL_HOST'] = config.MYSQL_HOST
 #app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
 app.config['MYSQL_DB'] = config.MYSQL_DB
 app.config['SECRET_KEY'] = config.SECRET_KEY
+
+# Other configurations...
+
+# Initialize JWTManager
+jwt = JWTManager(app)
+
 def set_mysql_credentials(user, password):
     app.config['MYSQL_USER'] = user
     app.config['MYSQL_PASSWORD'] = password
+
 mysql = MySQL(app)
 
 
@@ -46,12 +53,14 @@ def create_user():
         # Check if the email address matches the required format
         if not re.match(r'^[^\s@]+@iitgn\.ac\.in$', useremail):
             raise ValueError("Invalid email address format")
+        
 
         # Insert user details into the Student table
         cur.execute("INSERT INTO Student (useremail, password, hostelName, RoomNumber, PhoneNumber, program, discipline, RollNumber, address, isOnCampus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                     (useremail, password, hostelName, RoomNumber, PhoneNumber, program, discipline, RollNumber, address, isOnCampus))
         mysql.connection.commit()
-
+        cur.execute("GRANT SELECT ON EGate.Student TO %s@'localhost'", (useremail,))
+        mysql.connection.commit()
         cur.close()
 
         return jsonify({"message": "User created successfully"}), 200

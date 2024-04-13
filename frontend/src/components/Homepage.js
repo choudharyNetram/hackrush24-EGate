@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const HomePage = () => {
+function HomePage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Redirect to login page if not authenticated
+      navigate('/loginstudent');
+    } 
+  }, [navigate]);
+  
+
   return (
     <div>
-      <h1>Welcome to Our Website</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante
-        dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce
-        nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.
-      </p>
-      <p>
-        Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales
-        ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque
-        sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi
-        lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris
-        ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh.
-      </p>
+        <Link to={`/studentprofile`} > Profile page</Link>
+        this is homepage 
     </div>
+
   );
 };
+
 
 export default HomePage;
